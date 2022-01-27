@@ -1,5 +1,5 @@
 # Please keep the node- prefix as it is part of our naming convention
-service: node-yourServiceName-layer
+service: node-xlsx
 
 frameworkVersion: ">=2.39.0 <4.0.0"
 variablesResolutionMode: 20210326
