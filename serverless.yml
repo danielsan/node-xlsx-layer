@@ -1,0 +1,42 @@
+# Please keep the node- prefix as it is part of our naming convention
+service: node-yourServiceName-layer
+
+frameworkVersion: ">=2.39.0 <4.0.0"
+variablesResolutionMode: 20210326
+# variablesResolutionMode: 20210219
+configValidationMode: error
+
+# plugins:
+#   - some-plugin
+
+custom:
+  aws:
+    account: ${opt:account, env:AWS_ACCOUNT, '000000000000'}
+
+provider:
+  name: aws
+  stage: ${opt:stage, 'layer'}
+  region: ${opt:region, 'us-west-2'}
+  deploymentBucket:
+    name: em-serverless-apps-${self:provider.region}-${self:custom.aws.account}
+
+package:
+  patterns:
+    # exclude
+    - '!temp/**'
+    - '!node_modules/**'
+    - '!*.json'
+    # include:
+    - nodejs/node_modules
+
+layers:
+  lib:
+    path: '' # required, path to layer contents on disk
+    name: ${self:service}-${self:provider.stage} # Deployed Lambda layer name
+    description: ${file(./layer-description.js)}
+    compatibleRuntimes: # optional, a list of runtimes this layer is compatible with
+      - nodejs12.x
+      - nodejs14.x
+    allowedAccounts: # optional, a list of AWS account IDs allowed to access this layer.
+      - '*'
+    retain: true # optional, false by default. If true, layer versions are not deleted as new ones are created
